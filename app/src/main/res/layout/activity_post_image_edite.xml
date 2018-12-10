@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/post_image_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/post_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/post_image_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_204"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/post_image_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_170">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_34"
+                    android:layout_alignParentBottom="true">
+
+                    <RelativeLayout
+                        android:id="@+id/post_image_editor_container"
+                        android:layout_width="@dimen/dp_180"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/post_image_editor"
+                            android:layout_width="@dimen/dp_29"
+                            android:layout_height="@dimen/dp_29"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/icon_bar_edit_selector"
+                            android:duplicateParentState="true" />
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/post_image_dress_container"
+                        android:layout_width="@dimen/dp_180"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/post_image_dress"
+                            android:layout_width="@dimen/dp_29"
+                            android:layout_height="@dimen/dp_29"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/icon_bar_dress_selector"
+                            android:duplicateParentState="true" />
+
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
+

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ImageSaturationSeekBar">
+        <attr name="saturationTextSize" format="dimension" />
+        <attr name="progressSize" format="dimension" />
+        <attr name="saturationTextColor" format="color" />
+        <attr name="saturationProgressColor" format="color" />
+        <attr name="backgroundProgressColor" format="color" />
+        <attr name="seekBarResId" format="reference" />
+        <attr name="seekBarSize" format="reference" />
+    </declare-styleable>
+</resources>

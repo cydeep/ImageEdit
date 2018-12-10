@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">imageEdit</string>
+    <string name="post_image_saturation">饱和度</string>
+    <string name="comm_confirm">确认</string>
+    <string name="comm_cancel">取消</string>
+    <string name="action_done">完成</string>
+    <string name="image_edit">图片编辑</string>
+    <string name="post_image_crop">裁剪</string>
+    <string name="image_filter">滤镜</string>
+    <string name="image_filter_manange">管理滤镜</string>
+    <string name="comm_reset">还原</string>
+    <string name="manage">管理</string>
+    <string name="mine_infor_pic">图片</string>
+    <string name="weibo_tip_take_photo">拍摄照片</string>
+    <string name="weibo_photo_unit">张</string>
+    <string name="weibo_folder_all">所有照片</string>
+    <string name="text_filter_48">创新</string>
+    <string name="text_filter_49">流年</string>
+    <string name="text_filter_50">淡雅</string>
+    <string name="text_filter_51">怡尚</string>
+    <string name="text_filter_52">优格</string>
+    <string name="text_filter_53">胶片</string>
+    <string name="text_filter_54">黑白</string>
+    <string name="text_filter_55">个性</string>
+    <string name="text_filter_56">回忆</string>
+    <string name="text_filter_57">复古</string>
+    <string name="text_filter_58">森系</string>
+    <string name="text_filter_59">清新</string>
+    <string name="text_filter_60">摩登</string>
+    <string name="text_filter_61">绚丽</string>
+    <string name="text_filter_62">优雅</string>
+    <string name="text_filter_63">日系</string>
+    <string name="text_filter_64">新潮</string>
+    <string name="text_filter_65">原图</string>
+</resources>
