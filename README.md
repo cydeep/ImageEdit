@@ -12,4 +12,4 @@
 
 滤镜效果图
 
-![image](https://github.com/cydeep/ImageEdit/blob/master/app/src/main/res/drawable/image_fliter.gif)
+![image](https://github.com/cydeep/ImageEdit/blob/master/app/src/main/res/drawable/image_filter.gif)
