@@ -66,14 +66,15 @@ public class ImageEditActivity extends BaseActivity {
     private int currentPosition;
     private int lastFilterPosition = 0;
     //ImageSaturationActivity也要对图片继续处理，其实和ImageEditActivity里面是同一个bitmap，方便操作处理设置成静态,activity退出时回收就行了
-    public static Bitmap currentBitmap;
-    public static Bitmap originalBitmap;//
+    public Bitmap currentBitmap;
+    public Bitmap originalBitmap;//
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private GPUImageFilter currentFilter = new GPUImageFilter();
     private DisplayImageOptions displayImageOptions;
     private ImageView imageView;
     private String url;
     private String uuid;
+    private RxPermissions rxPermissions;
 
 
     @Override
@@ -93,7 +94,7 @@ public class ImageEditActivity extends BaseActivity {
         titleViews.center_container_title_text.setText(R.string.image_edit);
         titleViews.center_container_title_text.setTextColor(0xff645e66);
         titleViews.title_divider.setVisibility(View.VISIBLE);
-        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions = new RxPermissions(this);
         titleViews.right_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,6 +145,9 @@ public class ImageEditActivity extends BaseActivity {
         url = getIntent().getStringExtra("url");
         super.onCreate(savedInstanceState);
         uuid = "0000";
+        if (FileUtils.isFileExists(FileUtils.File_TEMP_CLIP)) {
+            FileUtils.deleteFolderFile(FileUtils.File_TEMP_CLIP, true);
+        }
         setContentView(R.layout.activity_post_image_edite);
         imageView = (ImageView) getView(R.id.post_image);
 
@@ -261,7 +265,7 @@ public class ImageEditActivity extends BaseActivity {
                 } else {
                     if (lastFilterPosition != position) {
                         currentFilter = onImageFilterSelectUpdateRecyclerListener.getGpuImageFilters().get(position);
-                        setFilterBitmap(executorService, ImageEditActivity.this, currentFilter, ImageEditActivity.originalBitmap, imageView, position);
+                        setFilterBitmap(executorService, ImageEditActivity.this, currentFilter, originalBitmap, imageView, position);
                     }
                 }
             }
@@ -274,27 +278,57 @@ public class ImageEditActivity extends BaseActivity {
                 String desc = (String) v.getTag();
                 if (desc.equals(getString(R.string.post_image_crop))) {
                     showWaitDialog();
-                    onImageFilterSelectUpdateRecyclerListener.getExecutorService().execute(new Runnable() {
+                    rxPermissions
+                            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .map(new Function<Boolean, String>() {
+                                @Override
+                                public String apply(Boolean granted) {
+                                    String saveClipUrl = null;
+                                    if (granted) {
+                                        saveClipUrl = ImageUtil.saveClip(currentBitmap, FileUtils.File_TEMP_CLIP);
+                                    } else {
+
+                                    }
+                                    return saveClipUrl;
+                                }
+                            }).subscribe(new Consumer<String>() {
                         @Override
-                        public void run() {
-                            ImageClipActivity.startImageClipActivity(ImageEditActivity.this, Constants.REQUEST_CODE_1004);
-                            hideWaitDialog();
+                        public void accept(String path) {
+                            if (path != null) {
+                                ImageClipActivity.startImageClipActivity(ImageEditActivity.this, url, Constants.REQUEST_CODE_1004);
+                                hideWaitDialog();
+                            } else {
+                                Toast.makeText(ImageEditActivity.this, "请手动增加权限", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                 } else if (desc.equals(getString(R.string.post_image_saturation))) {
                     showWaitDialog();
-                    onImageFilterSelectUpdateRecyclerListener.getExecutorService().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            ImageSaturationActivity.startImageSaturationActivity(ImageEditActivity.this, Constants.REQUEST_CODE_1002);
-                            ImageEditApplication.getInstance().handler.post(new Runnable() {
+                    rxPermissions
+                            .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .map(new Function<Boolean, String>() {
                                 @Override
-                                public void run() {
+                                public String apply(Boolean granted) {
+                                    String saveClipUrl = null;
+                                    if (granted) {
+                                        saveClipUrl = ImageUtil.saveClip(currentBitmap, FileUtils.File_TEMP_CLIP);
+                                    } else {
+
+                                    }
+                                    return saveClipUrl;
+                                }
+                            }).subscribe(path -> {
+                                if (path != null) {
+                                    ImageSaturationActivity.startImageSaturationActivity(ImageEditActivity.this,path, Constants.REQUEST_CODE_1002);
                                     hideWaitDialog();
+                                } else {
+                                    Toast.makeText(ImageEditActivity.this, "请手动增加权限", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                        }
-                    });
                 }
             }
         });
@@ -427,11 +461,11 @@ public class ImageEditActivity extends BaseActivity {
                     recyclerViewBaseAdapter.notifyDataSetChanged();
                     break;
                 case Constants.REQUEST_CODE_1002:
-                    setResultBitmap();
+                    setResultBitmap(data.getStringExtra("url"));
                     break;
 
                 case Constants.REQUEST_CODE_1004:
-                    setResultBitmap();
+                    setResultBitmap(data.getStringExtra("url"));
                     break;
             }
             if (currentBitmap != null) {
@@ -441,7 +475,8 @@ public class ImageEditActivity extends BaseActivity {
         }
     }
 
-    private void setResultBitmap() {
+    private void setResultBitmap(String url) {
+        currentBitmap = originalBitmap = ImageUtil.getSuitBitmap(url);
         setImageVieSize(imageView, currentBitmap.getWidth(), currentBitmap.getHeight());
         imageView = getView(R.id.post_image);
         imageView.setImageBitmap(currentBitmap);
@@ -457,6 +492,7 @@ public class ImageEditActivity extends BaseActivity {
         if (originalBitmap != null && !originalBitmap.isRecycled()) {
             originalBitmap.recycle();
         }
+
     }
 
 

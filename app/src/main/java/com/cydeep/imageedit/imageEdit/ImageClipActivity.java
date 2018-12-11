@@ -16,6 +16,8 @@ import com.cydeep.imageedit.R;
 import com.cydeep.imageedit.activity.BaseActivity;
 import com.cydeep.imageedit.base.TitleViews;
 import com.cydeep.imageedit.photoview.PhotoViewAttacher;
+import com.cydeep.imageedit.util.FileUtils;
+import com.cydeep.imageedit.util.ImageUtil;
 import com.cydeep.imageedit.util.ViewSizeUtil;
 
 import java.util.concurrent.ExecutorService;
@@ -36,8 +38,9 @@ public class ImageClipActivity extends BaseActivity {
         hideTitleBar();
     }
 
-    public static void startImageClipActivity(BaseActivity baseActivity, int requestCode) {
+    public static void startImageClipActivity(BaseActivity baseActivity,String url, int requestCode) {
         Intent intent = new Intent(baseActivity, ImageClipActivity.class);
+        intent.putExtra("url",url);
         baseActivity.startActivityForResult(intent, requestCode);
     }
 
@@ -45,10 +48,11 @@ public class ImageClipActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String url = getIntent().getStringExtra("url");
         setContentView(R.layout.activity_image_filter_clip);
         getView(R.id.bottom).getLayoutParams().height = ViewSizeUtil.getCustomDimen(44f);
-        imageView = (ImageView) getView(R.id.clip_image_view);
-        bitmap = ImageEditActivity.currentBitmap;
+        imageView = getView(R.id.clip_image_view);
+        bitmap = ImageUtil.getSuitBitmap(url);
         imageView.setImageBitmap(bitmap);
         mAttacher = new PhotoViewAttacher(imageView);
         mAttacher.setMediumScale(2.0f);
@@ -147,12 +151,14 @@ public class ImageClipActivity extends BaseActivity {
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        ImageEditActivity.currentBitmap = ImageEditActivity.originalBitmap = clip();
+//                        ImageEditActivity.currentBitmap = ImageEditActivity.originalBitmap = clip();
+                        String saveClip = ImageUtil.saveClip(clip(), FileUtils.File_TEMP_CLIP);
                         ImageEditApplication.getInstance().handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 hideWaitDialog();
                                 Intent intent = new Intent();
+                                intent.putExtra("url",saveClip);
                                 setResult(RESULT_OK, intent);
                                 finish();
                             }

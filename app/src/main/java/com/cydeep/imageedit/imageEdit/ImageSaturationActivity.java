@@ -12,6 +12,8 @@ import com.cydeep.imageedit.ImageEditApplication;
 import com.cydeep.imageedit.R;
 import com.cydeep.imageedit.activity.BaseActivity;
 import com.cydeep.imageedit.base.TitleViews;
+import com.cydeep.imageedit.util.FileUtils;
+import com.cydeep.imageedit.util.ImageUtil;
 import com.cydeep.imageedit.util.ViewSizeUtil;
 
 import java.util.concurrent.ExecutorService;
@@ -42,6 +44,7 @@ public class ImageSaturationActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String url = getIntent().getStringExtra("url");
         setContentView(R.layout.activity_image_saturation);
         ViewGroup.LayoutParams layoutParams = getView(R.id.image_container).getLayoutParams();
         layoutParams.height = layoutParams.width = ViewSizeUtil.getCustomDimen(360f);
@@ -62,7 +65,8 @@ public class ImageSaturationActivity extends BaseActivity {
 
 
         mGPUImageView = getView(R.id.post_image);
-        final Bitmap bitmap = ImageEditActivity.currentBitmap;
+//        final Bitmap bitmap = ImageEditActivity.currentBitmap;
+        final Bitmap bitmap = ImageUtil.getSuitBitmap(url);
         mGPUImageView.setImage(bitmap);
         mGPUImageView.setFilter(filter);
         setImageVieSize(mGPUImageView, bitmap.getWidth(), bitmap.getHeight());
@@ -89,11 +93,13 @@ public class ImageSaturationActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            ImageEditActivity.currentBitmap = ImageEditActivity.originalBitmap = mGPUImageView.capture(ImageEditActivity.currentBitmap.getWidth(), ImageEditActivity.currentBitmap.getHeight());
+                            String saveClip = ImageUtil.saveClip(mGPUImageView.capture(bitmap.getWidth(), bitmap.getHeight()), FileUtils.File_TEMP_CLIP);
+//                            ImageEditActivity.currentBitmap = ImageEditActivity.originalBitmap = mGPUImageView.capture(ImageEditActivity.currentBitmap.getWidth(), ImageEditActivity.currentBitmap.getHeight());
                             ImageEditApplication.getInstance().handler.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     Intent intent = new Intent();
+                                    intent.putExtra("url",saveClip);
                                     setResult(RESULT_OK, intent);
                                     finish();
                                     hideWaitDialog();
@@ -109,8 +115,9 @@ public class ImageSaturationActivity extends BaseActivity {
         });
     }
 
-    public static void startImageSaturationActivity(BaseActivity context, int requestCode) {
+    public static void startImageSaturationActivity(BaseActivity context,String url, int requestCode) {
         Intent intent = new Intent(context, ImageSaturationActivity.class);
+        intent.putExtra("url",url);
         context.startActivityForResult(intent, requestCode);
     }
 

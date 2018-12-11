@@ -385,7 +385,7 @@ public class FileUtils {
         return var1;
     }
 
-    public void deleteFolderFile(String var1, boolean isDelete) {
+    public static void deleteFolderFile(String var1, boolean isDelete) {
         if (!TextUtils.isEmpty(var1)) {
             try {
                 File file = new File(var1);
@@ -393,7 +393,7 @@ public class FileUtils {
                     File[] files = file.listFiles();
 
                     for (int i = 0; i < files.length; ++i) {
-                        this.deleteFolderFile(files[i].getAbsolutePath(), true);
+                        deleteFolderFile(files[i].getAbsolutePath(), true);
                     }
                 }
 
