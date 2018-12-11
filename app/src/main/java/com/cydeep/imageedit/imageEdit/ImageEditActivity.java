@@ -65,7 +65,6 @@ public class ImageEditActivity extends BaseActivity {
     private View lastSelectView;
     private int currentPosition;
     private int lastFilterPosition = 0;
-    //ImageSaturationActivity也要对图片继续处理，其实和ImageEditActivity里面是同一个bitmap，方便操作处理设置成静态,activity退出时回收就行了
     public Bitmap currentBitmap;
     public Bitmap originalBitmap;//
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
